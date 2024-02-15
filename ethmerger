@@ -1,0 +1,37 @@
+from web3 import Web3
+from zksync import Wallet, Connect
+
+# Ethereum and zkSync private keys
+eth_private_key = "YOUR_ETH_PRIVATE_KEY"
+zksync_private_key = "YOUR_ZKSYNC_PRIVATE_KEY"
+
+# Connect to Ethereum
+eth_provider = "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID"
+w3 = Web3(Web3.HTTPProvider(eth_provider))
+
+# Connect to zkSync
+zksync_network = "mainnet"
+zksync = Connect(network=zksync_network)
+
+# Create an Ethereum wallet
+eth_wallet = w3.eth.account.privateKeyToAccount(eth_private_key)
+
+# Create a zkSync wallet
+zksync_wallet = Wallet(wallet=zksync_private_key, provider=zksync)
+
+def deposit_to_zksync(amount):
+    # Deposit Ether from Ethereum to zkSync
+    deposit = zksync_wallet.deposit_to_sync_from_ethereum(eth_wallet.address, amount)
+    print(f"Deposit transaction hash: {deposit['tx_hash']}")
+
+def main():
+    try:
+        # Deposit 0.1 Ether to zkSync
+        deposit_amount = Web3.toWei(0.1, "ether")
+        deposit_to_zksync(deposit_amount)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
